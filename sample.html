@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pencarian Buku SMPN 257 Jakarta Timur</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login Styles */
+        .login-container {
+            width: 350px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .login-header p {
+            color: #7f8c8d;
+            margin-top: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        /* Dashboard Styles */
+        .dashboard-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-btn {
+            padding: 15px 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .tab-btn.active {
+            background-color: white;
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .tab-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+        }
+        
+        .tab {
+            display: none;
+        }
+        
+        .tab.active-tab {
+            display: block;
+        }
+        
+        /* Search Tab Styles */
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+        }
+        
+        .search-container button {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .search-container button:hover {
+            background-color: #2980b9;
+        }
+        
+        .search-results {
+            margin-top: 30px;
+        }
+        
+        .result-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .result-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-title {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .result-author {
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .result-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .relevance {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .relevance.high {
+            background-color: #2ecc71;
+        }
+        
+        .relevance.medium {
+            background-color: #f39c12;
+        }
+        
+        .relevance.low {
+            background-color: #e74c3c;
+        }
+        
+        /* Books Tab Styles */
+        .books-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .books-table th,
+        .books-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .books-table th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .books-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Profile Tab Styles */
+        .profile-card {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 25px;
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        
+        .profile-name {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .profile-role {
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 30px 0;
+            color: #7f8c8d;
+        }
+        
+        /* TF-IDF Explanation Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: 5px;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .modal-title {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .tf-idf-diagram {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 600px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+            
+            .tab-btn.active {
+                border-bottom: none;
+                border-left: 3px solid #3498db;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Halaman Login -->
+    <div id="loginPage" class="login-container">
+        <div class="login-header">
+            <h2>Perpustakaan SMPN 257</h2>
+            <p>Sistem Pencarian Buku</p>
+        </div>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Masukkan username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Masukkan password">
+        </div>
+        <button id="loginBtn" class="btn btn-block">Login</button>
+        <div class="login-footer">
+            <p>SMPN 257 Jakarta Timur &copy; 2025</p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="container" style="display:none;">
+        <div class="dashboard-header">
+            <h2>Perpustakaan Digital SMPN 257</h2>
+            <span id="userDisplay">Selamat datang</span>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('search')">Pencarian</button>
+            <button class="tab-btn" onclick="switchTab('books')">Data Buku</button>
+            <button class="tab-btn" onclick="switchTab('profile')">Profil</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Tab Pencarian -->
+            <div id="search" class="tab active-tab">
+                <h3>Pencarian Buku <button class="btn" onclick="openModal()" style="float: right; font-size: 12px;">Bagaimana cara kerja?</button></h3>
+                <div class="search-container">
+                    <input type="text" id="keyword" placeholder="Masukkan kata kunci pencarian...">
+                    <button onclick="searchBooks()">Cari</button>
+                </div>
+                <div id="results" class="search-results">
+                    <div class="no-results">
+                        <p>Masukkan kata kunci untuk mencari buku</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Data Buku -->
+            <div id="books" class="tab">
+                <h3>Data Koleksi Buku</h3>
+                <table class="books-table">
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Penulis</th>
+                            <th>Deskripsi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Belajar Python untuk Pemula</td>
+                            <td>Ali Akbar</td>
+                            <td>Buku dasar pemrograman Python untuk pemula yang ingin mempelajari dasar-dasar coding</td>
+                        </tr>
+                        <tr>
+                            <td>Python untuk Data Science</td>
+                            <td>Budi Santoso</td>
+                            <td>Pengenalan penggunaan Python untuk analisis data, visualisasi, dan machine learning</td>
+                        </tr>
+                        <tr>
+                            <td>Matematika Dasar SMP</td>
+                            <td>Dr. Siti Rahayu</td>
+                            <td>Buku yang membahas konsep aljabar, geometri, dan aritmatika untuk siswa SMP</td>
+                        </tr>
+                        <tr>
+                            <td>Fisika Praktis</td>
+                            <td>Prof. Ahmad Hidayat</td>
+                            <td>Penjelasan konsep fisika dengan contoh praktis dalam kehidupan sehari-hari</td>
+                        </tr>
+                        <tr>
+                            <td>Sejarah Indonesia Modern</td>
+                            <td>Dra. Kartini Wijaya</td>
+                            <td>Buku yang membahas sejarah Indonesia dari masa kemerdekaan hingga reformasi</td>
+                        </tr>
+                        <tr>
+                            <td>Kamus Bahasa Inggris Lengkap</td>
+                            <td>Tim Edukatif</td>
+                            <td>Kamus bahasa Inggris dengan contoh penggunaan dalam kalimat untuk siswa</td>
+                        </tr>
+                        <tr>
+                            <td>Pemrograman Web Dasar</td>
+                            <td>Hendri Gunawan</td>
+                            <td>Pengenalan HTML, CSS, dan JavaScript untuk membangun website sederhana</td>
+                        </tr>
+                        <tr>
+                            <td>Biologi SMP</td>
+                            <td>Dr. Ratna Dewi</td>
+                            <td>Buku biologi yang membahas struktur sel, sistem tubuh manusia, dan ekosistem</td>
+                        </tr>
+                        <tr>
+                            <td>Cerita Rakyat Nusantara</td>
+                            <td>Agus Priyanto</td>
+                            <td>Kumpulan cerita rakyat dari berbagai daerah di Indonesia</td>
+                        </tr>
+                        <tr>
+                            <td>Python dan Internet of Things</td>
+                            <td>Rudi Hermawan</td>
+                            <td>Menggunakan Python untuk membuat proyek IoT seperti smart home dan monitoring lingkungan</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab Profil -->
+            <div id="profile" class="tab">
+                <div class="profile-card">
+                    <div class="profile-avatar">A</div>
+                    <h3 class="profile-name" id="profileUsername">Admin</h3>
+                    <p class="profile-role">Administrator Perpustakaan</p>
+                    <button class="btn logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal TF-IDF Explanation -->
+    <div id="tfIdfModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 class="modal-title">Cara Kerja Sistem Pencarian Berbasis TF-IDF</h3>
+            <p>Sistem pencarian buku ini menggunakan metode <strong>Term Frequency-Inverse Document Frequency (TF-IDF)</strong> yang merupakan teknik pembobotan dalam information retrieval untuk menemukan buku yang paling relevan dengan kata kunci Anda.</p>
+            
+            <div class="tf-idf-diagram">
+                <p><strong>Alur Kerja:</strong> Keyword → TF-IDF Calculation → Ranking → Result</p>
+            </div>
+            
+            <h4>Komponen TF-IDF:</h4>
+            <ol>
+                <li><strong>Term Frequency (TF):</strong> Menghitung frekuensi munculnya kata kunci dalam deskripsi setiap buku</li>
+                <li><strong>Inverse Document Frequency (IDF):</strong> Memberikan bobot lebih tinggi pada kata yang jarang muncul di seluruh koleksi buku</li>
+                <li><strong>TF-IDF Score:</strong> Perkalian nilai TF dan IDF menghasilkan skor relevansi yang digunakan untuk mengurutkan hasil pencarian</li>
+            </ol>
+            
+            <p>Dengan metode ini, sistem dapat menemukan buku yang paling relevan berdasarkan kata kunci yang dimasukkan, tidak hanya berdasarkan kecocokan kata yang sama persis.</p>
+            
+            <h4>Contoh Penerapan:</h4>
+            <p>Saat Anda mencari kata "Python", sistem akan memberikan nilai relevansi tinggi untuk buku yang memiliki kata "Python" berulang kali dalam deskripsinya. Namun, sistem juga mempertimbangkan bahwa istilah spesifik seperti "Python" lebih bernilai dibandingkan kata umum seperti "buku" atau "yang".</p>
+        </div>
+    </div>
+
+    <script>
+        // Data buku untuk simulasi pencarian TF-IDF
+        const bookData = [
+            {
+                title: "Belajar Python untuk Pemula",
+                author: "Ali Akbar",
+                description: "Buku dasar pemrograman Python untuk pemula yang ingin mempelajari dasar-dasar coding",
+                keywords: ["python", "pemrograman", "coding", "pemula", "dasar"]
+            },
+            {
+                title: "Python untuk Data Science",
+                author: "Budi Santoso",
+                description: "Pengenalan penggunaan Python untuk analisis data, visualisasi, dan machine learning",
+                keywords: ["python", "data", "analisis", "visualisasi", "machine learning"]
+            },
+            {
+                title: "Matematika Dasar SMP",
+                author: "Dr. Siti Rahayu",
+                description: "Buku yang membahas konsep aljabar, geometri, dan aritmatika untuk siswa SMP",
+                keywords: ["matematika", "aljabar", "geometri", "aritmatika", "smp"]
+            },
+            {
+                title: "Fisika Praktis",
+                author: "Prof. Ahmad Hidayat",
+                description: "Penjelasan konsep fisika dengan contoh praktis dalam kehidupan sehari-hari",
+                keywords: ["fisika", "praktis", "konsep", "kehidupan sehari-hari"]
+            },
+            {
+                title: "Sejarah Indonesia Modern",
+                author: "Dra. Kartini Wijaya",
+                description: "Buku yang membahas sejarah Indonesia dari masa kemerdekaan hingga reformasi",
+                keywords: ["sejarah", "indonesia", "kemerdekaan", "reformasi"]
+            },
+            {
+                title: "Kamus Bahasa Inggris Lengkap",
+                author: "Tim Edukatif",
+                description: "Kamus bahasa Inggris dengan contoh penggunaan dalam kalimat untuk siswa",
+                keywords: ["bahasa inggris", "kamus", "kalimat", "belajar bahasa"]
+            },
+            {
+                title: "Pemrograman Web Dasar",
+                author: "Hendri Gunawan",
+                description: "Pengenalan HTML, CSS, dan JavaScript untuk membangun website sederhana",
+                keywords: ["web", "programming", "html", "css", "javascript", "website"]
+            },
+            {
+                title: "Biologi SMP",
+                author: "Dr. Ratna Dewi",
+                description: "Buku biologi yang membahas struktur sel, sistem tubuh manusia, dan ekosistem",
+                keywords: ["biologi", "sel", "tubuh manusia", "ekosistem", "smp"]
+            },
+            {
+                title: "Cerita Rakyat Nusantara",
+                author: "Agus Priyanto",
+                description: "Kumpulan cerita rakyat dari berbagai daerah di Indonesia",
+                keywords: ["cerita", "rakyat", "nusantara", "daerah", "indonesia"]
+            },
+            {
+                title: "Python dan Internet of Things",
+                author: "Rudi Hermawan",
+                description: "Menggunakan Python untuk membuat proyek IoT seperti smart home dan monitoring lingkungan",
+                keywords: ["python", "iot", "internet of things", "smart home", "monitoring"]
+            }
+        ];
+
+        // Validasi Login
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === '12345') {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('userDisplay').textContent = 'Selamat datang, ' + username;
+                document.getElementById('profileUsername').textContent = username;
+                switchTab('search');
+            } else {
+                alert('Username atau password salah!');
+            }
+        });
+
+        // Handle Enter key pada form login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginBtn').click();
+            }
+        });
+
+        // Switch Tabs
+        function switchTab(tabName) {
+            // Ubah tampilan tombol tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            
+            // Ubah tampilan konten tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active-tab');
+            });
+            document.getElementById(tabName).classList.add('active-tab');
+        }
+
+        // Simulasi pencarian dengan TF-IDF
+        function searchBooks() {
+            const keyword = document.getElementById('keyword').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('results');
+            
+            // Clear previous results
+            resultsContainer.innerHTML = '';
+            
+            if (!keyword) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <p>Masukkan kata kunci untuk mencari buku</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Simulasi TF-IDF dengan mock relevance score
+            const searchResults = bookData.map(book => {
+                // Calculate mock TF-IDF score
+                let score = 0;
+                
+                // Check for keyword in title (higher weight)
+                if (book.title.toLowerCase().includes(keyword)) {
+                    score += 3;
+                }
+                
+                // Check for keyword in description
+                if (book.description.toLowerCase().includes(keyword)) {
+                    score += 2;
+                }
+                
+                // Check in keywords list
+                if (book.keywords.some(k => k.includes(keyword) || keyword.includes(k))) {
+                    score += 2.5;
+                }
+                
+                // Add some variability for demo purposes
+                score += Math.random() * 0.5;
+                
+                return {
+                    ...book,
+                    relevance: score
+                };
+            }).filter(book => book.relevance > 0)
+              .sort((a, b) => b.relevance - a.relevance);
+            
+            // Display results
+            if (searchResults.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <p>Tidak ditemukan buku yang sesuai dengan kata kunci "${keyword}"</p>
+                    </div>
+                `;
+            } else {
+                searchResults.forEach(book => {
+                    let relevanceClass = 'low';
+                    if (book.relevance > 4) {
+                        relevanceClass = 'high';
+                    } else if (book.relevance > 2) {
+                        relevanceClass = 'medium';
+                    }
+                    
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    resultItem.innerHTML = `
+                        <h4 class="result-title">${book.title} <span class="relevance ${relevanceClass}">Relevansi: ${book.relevance.toFixed(1)}</span></h4>
+                        <p class="result-author">Penulis: ${book.author}</p>
+                        <p class="result-description">${book.description}</p>
+                    `;
+                    
+                    resultsContainer.appendChild(resultItem);
+                });
+            }
+        }
+
+        // Handle Enter key pada form pencarian
+        document.getElementById('keyword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+
+        // Modal Functions
+        function openModal() {
+            document.getElementById('tfIdfModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('tfIdfModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('tfIdfModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        // Logout function
+        function logout() {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
+</html>
